@@ -6,7 +6,7 @@ import Logo from "../../assets/imgs/logo.svg"
 import AuthInput from "@/components/auth/input";
 import styled from "styled-components";
 
-export default function Login() {
+export default function SignUp() {
     return (
         <Wrapper>
             <Container>
@@ -22,13 +22,14 @@ export default function Login() {
                     <ContentBox>
                         <TitleBox>
                             <Image src={Logo} alt="잇다" />
-                            <h3>로그인</h3>
+                            <h3>회원가입</h3>
                         </TitleBox>
                         <InputBox>
+                            <AuthInput label="닉네임" />
                             <AuthInput label="아이디" />
                             <AuthInput label="비밀번호" isPassword />
                         </InputBox>
-                        <button>로그인</button>
+                        <button>회원가입</button>
                     </ContentBox>
                 </RightBox>
             </Container>
