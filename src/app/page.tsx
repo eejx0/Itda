@@ -5,10 +5,12 @@ import styled from "styled-components";
 import CommonInput from "@/components/common/input";
 import ListBox from "@/components/common/listBox";
 import CurrentStoryBox from "@/components/common/currentStoryBox";
+import { NoContentCard } from "@/components/common/noContentCard";
 import { useState } from "react";
 
 export default function Home() {
   const [closed, setClosed] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(true);
 
   return (
     <Wrapper>
@@ -20,14 +22,23 @@ export default function Home() {
             <CommonInput placeholder="글을 검색하세요"/>
             <ListWrapper>
               <ListBox />
+              <ListBox />
+              <ListBox />
+              <ListBox />
+              <ListBox />
+              <ListBox />
+              <ListBox />
+              <ListBox />
             </ListWrapper>
           </LeftBox>
           <RightBox>
             <button>작성</button>
             <h3>연재되고 있는 글</h3>
-            <CurrentStoriesWrapper>
-              <CurrentStoryBox />
-            </CurrentStoriesWrapper>
+            {isEmpty ? <NoContentCard /> : (
+              <CurrentStoriesWrapper>
+                <CurrentStoryBox />
+              </CurrentStoriesWrapper>
+            )}
           </RightBox>
         </BoxWrapper>
       </Container>
@@ -74,15 +85,15 @@ const ListWrapper = styled.div`
 const LeftBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 70%;
+  width: 65%;
   height: 100%;
 `;
 
 const RightBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 25%;
-  height: 100%;
+  width: 30%;
+  margin-bottom: 30px;
   > button {
     height: 45px;
     width: 60px;

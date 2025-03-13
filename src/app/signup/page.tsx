@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import Person from "../../assets/imgs/personImg.png";
+import Person from "../../assets/imgs/person/personImg.png";
 import Logo from "../../assets/imgs/logo.svg"
 import AuthInput from "@/components/auth/input";
 import styled from "styled-components";
