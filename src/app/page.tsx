@@ -17,15 +17,8 @@ export default function Home() {
         <h3>안녕하세요, 의진님  💬</h3>
         <BoxWrapper>
           <LeftBox>
-            <CommonInput />
+            <CommonInput placeholder="글을 검색하세요"/>
             <ListWrapper>
-              <ListBox />
-              <ListBox />
-              <ListBox />
-              <ListBox />
-              <ListBox />
-              <ListBox />
-              <ListBox />
               <ListBox />
             </ListWrapper>
           </LeftBox>
@@ -33,13 +26,6 @@ export default function Home() {
             <button>작성</button>
             <h3>연재되고 있는 글</h3>
             <CurrentStoriesWrapper>
-              <CurrentStoryBox />
-              <CurrentStoryBox />
-              <CurrentStoryBox />
-              <CurrentStoryBox />
-              <CurrentStoryBox />
-              <CurrentStoryBox />
-              <CurrentStoryBox />
               <CurrentStoryBox />
             </CurrentStoriesWrapper>
           </RightBox>
