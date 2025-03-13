@@ -10,7 +10,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [closed, setClosed] = useState(false);
-  const [isEmpty, setIsEmpty] = useState(true);
+  const [isEmpty, ] = useState(true);
 
   return (
     <Wrapper>
@@ -58,7 +58,6 @@ const Container = styled.div<{ $closed: boolean }>`
   height: calc(100vh - 160px);
   margin-left: ${({ $closed }) => ($closed ? "calc(50% - 35vw + 45px)" : "calc(50% - 35vw + 125px)")}; 
   margin-right: auto;
-
   transition: margin-left 0.3s ease;
   > h3 {
     font-size: 23px;

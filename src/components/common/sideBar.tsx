@@ -8,6 +8,8 @@ import Write from "../../assets/imgs/sideBar/write.svg"
 import Book from "../../assets/imgs/sideBar/book.svg"
 import My from "../../assets/imgs/sideBar/my.svg"
 import { Dispatch, SetStateAction } from "react";
+import { useEffect } from "react";
+import Link from "next/link";
 import Image from "next/image";
 
 interface SideBarProps {
@@ -16,21 +18,37 @@ interface SideBarProps {
 }
 
 export default function SideBar({closed, setClosed}:SideBarProps) {
+    useEffect(() => {
+        const saveState = localStorage.getItem("closedSidebar")
+        if (saveState !== null) {
+            setClosed(saveState === "true");
+        }
+    })
+
+    const toggleSidebar = () => {
+        setClosed(!closed);
+        localStorage.setItem("closedSidebar", String(!closed));
+    };
+
     return (
         <Wrapper $closed={closed}>
-            <LogoBox onClick={() => setClosed(!closed)}>
+            <LogoBox onClick={() => toggleSidebar()}>
                 <Image src={Logo} alt="" />
                 {!closed && <Image src={TextLogo} alt="잇다" />}
             </LogoBox>
             <NavigationBox>
-                <Nav>
-                    <Image src={Home} alt="홈" />
-                    {!closed && <p>홈</p>}
-                </Nav>
-                <Nav>
-                    <Image src={Write} alt="글 쓰기" />
-                    {!closed && <p>글 쓰기</p>}
-                </Nav>
+                <Link href={'/'}>
+                    <Nav>
+                        <Image src={Home} alt="홈" />
+                        {!closed && <p>홈</p>}
+                    </Nav>
+                </Link>
+                <Link href={'/post'}>
+                    <Nav>
+                        <Image src={Write} alt="글 쓰기" />
+                        {!closed && <p>글 쓰기</p>}
+                    </Nav>
+                </Link>
                 <Nav>
                     <Image src={Book} alt="책" />
                     {!closed && <p>책</p>}
