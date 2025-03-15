@@ -78,6 +78,7 @@ const Wrapper = styled.div<{ $closed: boolean }>`
     gap: 85px;
     transition: width 0.3s ease;
     background-color: white;
+    z-index: 1000;
 `;
 
 const LogoBox = styled.div`

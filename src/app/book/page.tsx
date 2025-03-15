@@ -4,6 +4,7 @@ import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
 import CommonInput from "@/components/common/input";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function BookList() {
     const [closed, setClosed] = useState<boolean>(false);
@@ -24,10 +25,12 @@ export default function BookList() {
                     <CommonInput placeholder="책 제목을 검색하세요"/>
                 </CommonInputWrapper>
                 <BookListWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
+                    <Link href={'/book/id'}>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                    </Link>
                     <BookWrapper>
                         <BookPicture />
                         <p>책 제목</p>
