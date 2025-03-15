@@ -49,10 +49,12 @@ export default function SideBar({closed, setClosed}:SideBarProps) {
                         {!closed && <p>글 쓰기</p>}
                     </Nav>
                 </Link>
-                <Nav>
-                    <Image src={Book} alt="책" />
-                    {!closed && <p>책</p>}
-                </Nav>
+                <Link href={'/book'}>
+                    <Nav>
+                        <Image src={Book} alt="책" />
+                        {!closed && <p>책</p>}
+                    </Nav>
+                </Link>
                 <Nav>
                     <Image src={My} alt="마이페이지" />
                     {!closed && <p>마이페이지</p>}
@@ -75,6 +77,7 @@ const Wrapper = styled.div<{ $closed: boolean }>`
     flex-direction: column;
     gap: 85px;
     transition: width 0.3s ease;
+    background-color: white;
 `;
 
 const LogoBox = styled.div`

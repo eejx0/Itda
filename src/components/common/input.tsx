@@ -21,7 +21,7 @@ export default function CommonInput({ value, onChange, placeholder }:InputProps)
 
 const Wrapper = styled.div`
     width: 239px;
-    height: 40px;
+    height: 35px;
     border-radius: 100px;
     border: 1px solid rgba(0,0,0,0.2);
     padding-left: 15px;

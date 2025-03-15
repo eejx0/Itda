@@ -5,13 +5,15 @@ import SideBar from "@/components/common/sideBar";
 import Picture from "../../assets/imgs/picture.svg";
 import Check from "../../assets/imgs/check.svg";
 import Advertisement from "../../assets/imgs/advertisement.png";
+import HoverContent from "@/components/hoverContent";
 import Image from "next/image";
 import { useState } from "react";
 
 export default function PostContent() {
-    const [closed, setClosed] = useState(false);
-    const [checked, setChecked] = useState(true);
+    const [closed, setClosed] = useState<boolean>(false);
+    const [checked, setChecked] = useState<boolean>(true);
     const [, setImage] = useState<File | null>(null);
+    const [isHover, setIsHover] = useState<boolean>(false);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -26,7 +28,10 @@ export default function PostContent() {
             <Container $closed={closed}>
                 <ContentWrapper>
                     <HeadWrapper>
-                        <UploadPicture>
+                        <UploadPicture 
+                            onMouseEnter={() => setIsHover(true)}
+                            onMouseLeave={() => setIsHover(false)}
+                        >
                             <input
                                 type="file"
                                 accept="image/*"
@@ -43,6 +48,7 @@ export default function PostContent() {
                                     style={{cursor: 'pointer'}}
                                 />
                             </label>
+                            {isHover && <HoverContent />}
                         </UploadPicture>
                         <CompleteWrapper>
                             <p>완결</p>
@@ -89,6 +95,7 @@ const UploadPicture = styled.div`
     cursor: pointer;
     display: flex;
     align-items: center;
+    position: relative;
 `;
 
 const ContentWrapper = styled.div`
