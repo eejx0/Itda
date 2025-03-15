@@ -1,19 +1,22 @@
 "use client"
 
 import styled from "styled-components"
+import Link from "next/link";
 
 export default function ListBox() {
     return (
         <Wrapper>
-            <ContentWrapper>
-                <LikeImg />
-                <ContentBox>
-                    <Title>제목</Title>
-                    <Author>작가</Author>
-                    <Content>니네 내일 세상이 멸망하면 뭐부터 할건지 생각해봄?? 근데 나는 진짜 모르겠음.. 이 부분에다가 이제 이야기 내용 일부분을 넣는건데
-                    내일 급식 뭐지 아 집 가고 싶다.. 누룽이 씻겨야되는데;;아무것도 하기싫다 냐먀냐먀냠</Content>
-                </ContentBox>
-            </ContentWrapper>
+            <Link href={'/id'}>
+                <ContentWrapper>
+                    <LikeImg />
+                    <ContentBox>
+                        <Title>제목</Title>
+                        <Author>작가</Author>
+                        <Content>니네 내일 세상이 멸망하면 뭐부터 할건지 생각해봄?? 근데 나는 진짜 모르겠음.. 이 부분에다가 이제 이야기 내용 일부분을 넣는건데
+                        내일 급식 뭐지 아 집 가고 싶다.. 누룽이 씻겨야되는데;;아무것도 하기싫다 냐먀냐먀냠</Content>
+                    </ContentBox>
+                </ContentWrapper>
+            </Link>
             <Line />
         </Wrapper>
     )

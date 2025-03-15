@@ -78,7 +78,6 @@ const Container = styled.div`
   width: 70vw;
   margin-left: auto;
   margin-right: auto;
-  transition: margin-left 0.3s ease;
   padding-bottom: 208px;
   > h3 {
     font-size: 23px;

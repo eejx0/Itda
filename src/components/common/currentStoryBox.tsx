@@ -2,14 +2,7 @@
 
 import styled from "styled-components"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    type?: string;
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    placeholder?: string;
-}
-
-export default function CurrentStoryBox({type, value, onChange, placeholder}: InputProps) {
+export default function CurrentStoryBox() {
     return (
         <Wrapper>
             <LikeImg />

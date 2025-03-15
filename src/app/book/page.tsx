@@ -2,7 +2,8 @@
 
 import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
-import CommonInput from "@/components/common/input";
+import CommonInput from "@/components/common/input";    
+import Footer from "@/components/common/footer";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -12,59 +13,62 @@ export default function BookList() {
     return (
         <Wrapper>
             <SideBar closed={closed} setClosed={setClosed}/>
-            <Container $closed={closed}>
-                <TextWrapper>
-                    <p className="head">IF 스토리</p>
-                    <TitleWrapper>
-                        <p className="title">나의 상상은</p>
-                        <p className="colorText">현실</p>
-                        <p>이 된다</p>
-                    </TitleWrapper>
-                </TextWrapper>
-                <CommonInputWrapper>
-                    <CommonInput placeholder="책 제목을 검색하세요"/>
-                </CommonInputWrapper>
-                <BookListWrapper>
-                    <Link href={'/book/id'}>
+            <ContainerWrapper $closed={closed}>
+                <Container>
+                    <TextWrapper>
+                        <p className="head">IF 스토리</p>
+                        <TitleWrapper>
+                            <p>나의 상상은</p>
+                            <p className="colorText">현실</p>
+                            <p>이 된다</p>
+                        </TitleWrapper>
+                    </TextWrapper>
+                    <CommonInputWrapper>
+                        <CommonInput placeholder="책 제목을 검색하세요"/>
+                    </CommonInputWrapper>
+                    <BookListWrapper>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <p>책 제목</p>
+                            </BookWrapper>
+                        </Link>
                         <BookWrapper>
                             <BookPicture />
                             <p>책 제목</p>
                         </BookWrapper>
-                    </Link>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                    <BookWrapper>
-                        <BookPicture />
-                        <p>책 제목</p>
-                    </BookWrapper>
-                </BookListWrapper>
-            </Container>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                        <BookWrapper>
+                            <BookPicture />
+                            <p>책 제목</p>
+                        </BookWrapper>
+                    </BookListWrapper>
+                </Container>
+                <Footer />
+            </ContainerWrapper>
         </Wrapper>
     )
 }
@@ -73,16 +77,25 @@ const Wrapper = styled.div`
     display: flex;
 `;
 
-const Container = styled.div<{ $closed: boolean }>`
+const ContainerWrapper = styled.div<{ $closed: boolean }>`
+    position: relative;
+    flex: 1;
+    overflow: auto;
+    width: 100%;
+    transition: margin-left 0.3s ease;
+    margin-left: ${({$closed}) => ($closed ? "90px" : "250px")};
+`;
+
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 70px;
   width: 70vw;
-  margin-left: ${({ $closed }) => ($closed ? "calc(50% - 35vw + 45px)" : "calc(50% - 35vw + 125px)")}; 
+  margin-left: auto;
   margin-right: auto;
-  transition: margin-left 0.3s ease;
-  margin-bottom: 30px;
+  margin-bottom: 70px;
   gap: 30px;
+  padding-bottom: 208px;
   > h3 {
     font-size: 23px;
   }
