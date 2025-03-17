@@ -7,6 +7,7 @@ import ListBox from "@/components/common/listBox";
 import CurrentStoryBox from "@/components/common/currentStoryBox";
 import { NoContentCard } from "@/components/common/noContentCard";
 import Footer from "@/components/common/footer";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
@@ -34,7 +35,9 @@ export default function Home() {
               </ListWrapper>
             </LeftBox>
             <RightBox>
-              <button>작성</button>
+              <StyledLink href={'/post'}>
+                작성
+              </StyledLink>
               <h3>연재되고 있는 글</h3>
               {isEmpty ? 
                 <NoContentCardWrapper>
@@ -106,25 +109,29 @@ const LeftBox = styled.div`
   height: 100%;
 `;
 
+const StyledLink = styled(Link)`
+  height: 35px;
+  width: 60px;
+  background-color: #FFACDD;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  color: white;
+  border: none;
+  transition: 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: #FF86CE;
+  }
+`;
+
 const RightBox = styled.div`
   display: flex;
   flex-direction: column;
   width: 30%;
-  > button {
-    height: 35px;
-    width: 60px;
-    background-color: #FFACDD;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 15px;
-    color: white;
-    border: none;
-    transition: 0.2s;
-    cursor: pointer;
-      &:hover {
-        background-color: #FF86CE;
-      }
-  }
   > h3 {
     margin-top: 40px;
   }

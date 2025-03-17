@@ -5,11 +5,12 @@ import SideBar from "@/components/common/sideBar";
 import ListBox from "@/components/common/listBox";
 import Image from "next/image";
 import Person from "../../assets/imgs/person/writePersonImg.png";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function MyPage() {
     const [closed, setClosed] = useState(false);
-    const [isEmpty, ] = useState(true);
+    const [isEmpty, ] = useState(false);
 
     return (
         <Wrapper>
@@ -27,7 +28,7 @@ export default function MyPage() {
                         <NoContentWrapper>
                             <Image src={Person} alt="" style={{width: '153px', height: '178px'}}/>
                             <p>작성한 글이 없어요</p>
-                            <button>작성</button>
+                            <StyledLink href={'/post'}>작성</StyledLink>
                         </NoContentWrapper> : (
                         <ListBoxWrapper>
                             <ListBox />
@@ -58,7 +59,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     margin-top: 70px;
-    width: 50vw;
+    width: 70vw;
     margin-left: auto;
     margin-right: auto;
     position: relative;
@@ -111,19 +112,26 @@ const NoContentWrapper = styled.div`
         margin-top: 40px;
     }
     > button {
-        width: 148px;
-        height: 28px;
-        border: none;
-        border-radius: 10px;
-        background-color: #FFACDD;
-        color: white;
-        font-weight: 600;
-        font-size: 13px;
-        margin-top: 15px;
-        cursor: pointer;
-        transition: 0.2s;
-        &:hover {
-            background-color: #FF86CE;
-        }
+        
+    }
+`;
+
+const StyledLink = styled(Link)`
+    width: 148px;
+    height: 28px;
+    border: none;
+    border-radius: 10px;
+    background-color: #FFACDD;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+        background-color: #FF86CE;
     }
 `;
