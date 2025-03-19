@@ -30,41 +30,66 @@ export default function BookList() {
                         <Link href={'/book/id'}>
                             <BookWrapper>
                                 <BookPicture />
-                                <p>책 제목</p>
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
                             </BookWrapper>
                         </Link>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
-                        <BookWrapper>
-                            <BookPicture />
-                            <p>책 제목</p>
-                        </BookWrapper>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
+                            </BookWrapper>
+                        </Link>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
+                            </BookWrapper>
+                        </Link>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
+                            </BookWrapper>
+                        </Link>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
+                            </BookWrapper>
+                        </Link>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
+                            </BookWrapper>
+                        </Link>
+                        <Link href={'/book/id'}>
+                            <BookWrapper>
+                                <BookPicture />
+                                <BookTextWrapper>
+                                    <p className="title">책 제목</p>
+                                    <p className="author">작가</p>
+                                </BookTextWrapper>   
+                            </BookWrapper>
+                        </Link>
                     </BookListWrapper>
                 </Container>
                 <Footer />
@@ -132,7 +157,7 @@ const CommonInputWrapper = styled.div`
 const BookListWrapper = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    row-gap: 40px;
+    row-gap: 45px;
     column-gap: 20px;
     width: 100%;
 `;
@@ -142,10 +167,6 @@ const BookWrapper = styled.div`
     flex-direction: column;
     gap: 15px;
     cursor: pointer;
-    > p {
-        font-size: 15px;
-        font-weight: 600;
-    }
 `;
 
 const BookPicture = styled.div`
@@ -155,4 +176,18 @@ const BookPicture = styled.div`
     border: 1px solid black;
     aspect-ratio: 3/4;
     border-radius: 10px;
+`;
+
+const BookTextWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    .title {
+        font-size: 15px;
+        font-weight: 600;
+    }
+    .author {
+        font-size: 12px;
+        color: #8C8C8C;
+    }
 `;

@@ -71,7 +71,7 @@ const ContainerWrapper = styled.div<{ $closed: boolean }>`
   overflow: auto;
   width: 100%;
   transition: margin-left 0.3s ease;
-  margin-left: ${({$closed}) => ($closed ? "90px" : "250px")};
+  margin-left: ${({$closed}) => ($closed ? "90px" :'250px')};
 `;
 
 const Container = styled.div`
