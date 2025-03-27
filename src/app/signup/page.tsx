@@ -5,8 +5,35 @@ import Person from "../../assets/imgs/person/personImg.png";
 import Logo from "../../assets/imgs/logo.svg"
 import AuthInput from "@/components/auth/input";
 import styled from "styled-components";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { useState } from "react";
+import { auth, db } from "@/firebase";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+    const [nickname, setNickname] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const router = useRouter();
+
+    const handleSignUp = async () => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await setDoc(doc(db, "users", user.uid), {
+                nickname: nickname,
+                email: email,
+                createdAt: new Date()
+            });
+            router.push('/login')
+        } catch (error) {
+            console.error("회원가입 오류:", error);
+        }
+    };
+
     return (
         <Wrapper>
             <Container>
@@ -25,11 +52,11 @@ export default function SignUp() {
                             <h3>회원가입</h3>
                         </TitleBox>
                         <InputBox>
-                            <AuthInput label="닉네임" />
-                            <AuthInput label="아이디" />
-                            <AuthInput label="비밀번호" isPassword />
+                            <AuthInput value={nickname} label="닉네임" onChange={(e) =>  setNickname(e.target.value)} />
+                            <AuthInput value={email} label="이메일" onChange={(e) =>  setEmail(e.target.value)} />
+                            <AuthInput value={password} label="비밀번호" isPassword onChange={(e) =>  setPassword(e.target.value)} />
                         </InputBox>
-                        <button>회원가입</button>
+                        <button onClick={handleSignUp}>회원가입</button>
                     </ContentBox>
                 </RightBox>
             </Container>

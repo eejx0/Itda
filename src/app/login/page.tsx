@@ -5,8 +5,27 @@ import Person from "../../assets/imgs/person/personImg.png";
 import Logo from "../../assets/imgs/logo.svg"
 import AuthInput from "@/components/auth/input";
 import styled from "styled-components";
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase"; 
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const router = useRouter();
+
+    const handleLogin = async () => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            console.log("로그인 성공:", user);
+            router.push('/');
+        } catch (error) {
+            console.error("로그인 오류:", error);
+        }
+    };
+
     return (
         <Wrapper>
             <Container>
@@ -25,10 +44,10 @@ export default function Login() {
                             <h3>로그인</h3>
                         </TitleBox>
                         <InputBox>
-                            <AuthInput label="아이디" />
-                            <AuthInput label="비밀번호" isPassword />
+                            <AuthInput label="이메일" value={email} onChange={(e) =>  setEmail(e.target.value)} />
+                            <AuthInput label="비밀번호" isPassword value={password} onChange={(e) => setPassword(e.target.value)} />
                         </InputBox>
-                        <button>로그인</button>
+                        <button onClick={handleLogin}>로그인</button>
                     </ContentBox>
                 </RightBox>
             </Container>
