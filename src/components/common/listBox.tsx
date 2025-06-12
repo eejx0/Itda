@@ -3,17 +3,24 @@
 import styled from "styled-components"
 import Link from "next/link";
 
-export default function ListBox() {
+interface ListBoxProps {
+    id: string;
+    title: string;
+    author: string;
+    content: string;
+}
+
+export default function ListBox({ post }: {post: ListBoxProps}) {
+
     return (
         <Wrapper>
-            <Link href={'/id'}>
+            <Link href={`/${post.id}`}>
                 <ContentWrapper>
-                    <LikeImg />
+                    {/* <LikeImg /> */}
                     <ContentBox>
-                        <Title>제목</Title>
-                        <Author>작가</Author>
-                        <Content>니네 내일 세상이 멸망하면 뭐부터 할건지 생각해봄?? 근데 나는 진짜 모르겠음.. 이 부분에다가 이제 이야기 내용 일부분을 넣는건데
-                        내일 급식 뭐지 아 집 가고 싶다.. 누룽이 씻겨야되는데;;아무것도 하기싫다 냐먀냐먀냠ㅇ니ㅓ넝런ㅇ런ㅁ얼ㄴ앛으아ㅣ츠니앛ㄹ머나ㅓ나ㅣㅇ런아ㅣ러;ㄴㅁ아ㅣ러안ㅁ러;ㄴㅁ아렁ㅁㄴ럼ㄴㅇㄹㅁ</Content>
+                        <Title>{post.title}</Title>
+                        <Author>{post.author}</Author>
+                        <Content>{post.content}</Content>
                     </ContentBox>
                 </ContentWrapper>
             </Link>
@@ -36,12 +43,12 @@ const ContentWrapper = styled.div`
     height: 90px;
 `;
 
-const LikeImg = styled.div`
-    width: 94px;
-    height: 94px;
-    background-color: black;
-    border-radius: 10px;
-`;
+// const LikeImg = styled.div`
+//     width: 94px;
+//     height: 94px;
+//     background-color: black;
+//     border-radius: 10px;
+// `;
 
 const ContentBox = styled.div`
     display: flex;

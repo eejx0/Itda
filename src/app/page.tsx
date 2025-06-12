@@ -8,11 +8,38 @@ import CurrentStoryBox from "@/components/common/currentStoryBox";
 import { NoContentCard } from "@/components/common/noContentCard";
 import Footer from "@/components/common/footer";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "@/firebase";
+
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  completed: boolean;
+  createdAt: string;
+}
 
 export default function Home() {
   const [closed, setClosed] = useState(false);
   const [isEmpty, ] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const snapshot = await getDocs(collection(db, "posts"));
+      const postData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Post[];
+
+      setPosts(postData);
+    };
+
+    fetchPosts();
+  }, []);
+
 
   return (
     <Wrapper>
@@ -24,14 +51,11 @@ export default function Home() {
             <LeftBox>
               <CommonInput placeholder="글을 검색하세요"/>
               <ListWrapper>
-                <ListBox />
-                <ListBox />
-                <ListBox />
-                <ListBox />
-                <ListBox />
-                <ListBox />
-                <ListBox />
-                <ListBox />
+                {posts
+                  .filter((post) => post.completed)
+                  .map((post) => (
+                    <ListBox key={post.id} post={post} />
+                ))}
               </ListWrapper>
             </LeftBox>
             <RightBox>

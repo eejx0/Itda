@@ -2,7 +2,7 @@
 
 import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
-import ListBox from "@/components/common/listBox";
+// import ListBox from "@/components/common/listBox";
 import Image from "next/image";
 import Person from "../../assets/imgs/person/writePersonImg.png";
 import Link from "next/link";
@@ -31,12 +31,12 @@ export default function MyPage() {
                             <StyledLink href={'/post'}>작성</StyledLink>
                         </NoContentWrapper> : (
                         <ListBoxWrapper>
+                            {/* <ListBox />
                             <ListBox />
                             <ListBox />
                             <ListBox />
                             <ListBox />
-                            <ListBox />
-                            <ListBox />
+                            <ListBox /> */}
                         </ListBoxWrapper>
                     )}
                 </Container>
