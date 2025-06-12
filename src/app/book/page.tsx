@@ -120,7 +120,7 @@ const Container = styled.div`
   margin-right: auto;
   margin-bottom: 70px;
   gap: 30px;
-  padding-bottom: 208px;
+  /* padding-bottom: 208px; */
   > h3 {
     font-size: 23px;
   }

@@ -9,8 +9,9 @@ import { NoContentCard } from "@/components/common/noContentCard";
 import Footer from "@/components/common/footer";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 interface Post {
   id: string;
@@ -23,8 +24,10 @@ interface Post {
 
 export default function Home() {
   const [closed, setClosed] = useState(false);
-  const [isEmpty, ] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [nickname, setNickname] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -40,21 +43,55 @@ export default function Home() {
     fetchPosts();
   }, []);
 
+  useEffect(() => {
+    // posts 배열에서 completed가 false인 글이 하나라도 있으면 isEmpty는 false
+    // 아니면 true
+    const hasIncomplete = posts.some(post => post.completed === false);
+    setIsEmpty(!hasIncomplete);
+  }, [posts]);  
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setNickname(docSnap.data().nickname);
+          } else {
+            console.log("사용자 문서가 존재하지 않음");
+          }
+        } catch (err) {
+          console.error("닉네임 가져오기 실패:", err);
+        }
+      }
+    });
+  
+    return () => unsubscribe();
+  }, []);
+
+  const filteredCompletedPosts = posts.filter(post => 
+    post.completed &&
+    (post.title.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   return (
     <Wrapper>
       <SideBar closed={closed} setClosed={setClosed}/>
       <ContainerWrapper $closed={closed}>
         <Container>
-          <h3>안녕하세요, 의진님  💬</h3>
+          <h3>안녕하세요, {nickname}님  💬</h3>
           <BoxWrapper>
             <LeftBox>
-              <CommonInput placeholder="글을 검색하세요"/>
+              <CommonInput 
+                placeholder="글을 검색하세요" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <ListWrapper>
-                {posts
-                  .filter((post) => post.completed)
-                  .map((post) => (
-                    <ListBox key={post.id} post={post} />
+                {filteredCompletedPosts.map((post) => (
+                  <ListBox key={post.id} post={post} />
                 ))}
               </ListWrapper>
             </LeftBox>
@@ -68,12 +105,12 @@ export default function Home() {
                   <NoContentCard />
                 </NoContentCardWrapper> : (
                 <CurrentStoriesWrapper>
-                  <CurrentStoryBox />
-                  <CurrentStoryBox />
-                  <CurrentStoryBox />
-                  <CurrentStoryBox />
-                  <CurrentStoryBox />
-                  <CurrentStoryBox />
+                  {posts
+                    .filter((post) => !post.completed)
+                    .map((post) => 
+                      <CurrentStoryBox key={post.id} post={post} />
+                    )
+                  }
                 </CurrentStoriesWrapper>
               )}
             </RightBox>
@@ -105,7 +142,7 @@ const Container = styled.div`
   width: 70vw;
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 208px;
+  /* padding-bottom: 208px; */
   > h3 {
     font-size: 23px;
   }

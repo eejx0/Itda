@@ -3,8 +3,8 @@
 import SideBar from "@/components/common/sideBar";
 import styled from "styled-components";
 import CommonInput from "@/components/common/input";
-import ListBox from "@/components/common/listBox";
-import CurrentStoryBox from "@/components/common/currentStoryBox";
+// import ListBox from "@/components/common/listBox";
+// import CurrentStoryBox from "@/components/common/currentStoryBox";
 import { NoContentCard } from "@/components/common/noContentCard";
 import Footer from "@/components/common/footer";
 import Link from "next/link";
@@ -24,14 +24,14 @@ export default function BookDetail() {
             <LeftBox>
               <CommonInput placeholder="글을 검색하세요"/>
               <ListWrapper>
+                {/* <ListBox />
                 <ListBox />
                 <ListBox />
                 <ListBox />
                 <ListBox />
                 <ListBox />
                 <ListBox />
-                <ListBox />
-                <ListBox />
+                <ListBox /> */}
               </ListWrapper>
             </LeftBox>
             <RightBox>
@@ -44,12 +44,12 @@ export default function BookDetail() {
                   <NoContentCard />
                 </NoContentCardWrapper> : (
                 <CurrentStoriesWrapper>
+                  {/* <CurrentStoryBox />
                   <CurrentStoryBox />
                   <CurrentStoryBox />
                   <CurrentStoryBox />
                   <CurrentStoryBox />
-                  <CurrentStoryBox />
-                  <CurrentStoryBox />
+                  <CurrentStoryBox /> */}
                 </CurrentStoriesWrapper>
               )}
             </RightBox>
@@ -81,7 +81,7 @@ const Container = styled.div`
   width: 70vw;
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 208px;
+  /* padding-bottom: 208px; */
   > h3 {
     font-size: 23px;
   }

@@ -11,7 +11,8 @@ import { useState } from "react";
 import { db } from "@/firebase";
 // import { app } from "@/firebase";
 // import { uploadBytes, ref, getDownloadURL, getStorage } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default function PostContent() {
     const [closed, setClosed] = useState<boolean>(false);
@@ -31,6 +32,13 @@ export default function PostContent() {
     // };
 
     const savePost = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (!user) {
+            alert("로그인이 필요합니다!");
+            return;
+        }
         try {
             // 이미지 관련 처리 주석
             // let imageUrl = "";
@@ -40,12 +48,16 @@ export default function PostContent() {
             //     imageUrl = await getDownloadURL(imageRef); 
             // }
 
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const nickname = userDoc.exists() ? userDoc.data().nickname : "익명";
+
             const docRef = await addDoc(collection(db, "posts"), {
                 title,
                 content,
                 completed: checked,
                 // imageUrl, // 이미지 없으니까 빼기
                 createdAt: new Date(),
+                author: nickname
             });
 
             alert("포스트가 저장되었습니다!");

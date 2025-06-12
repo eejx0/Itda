@@ -2,12 +2,17 @@
 
 import styled from "styled-components"
 
-export default function CurrentStoryBox() {
+interface CurrentStoryBoxProps {
+    title: string;
+    author: string;
+}
+
+export default function CurrentStoryBox({ post }: {post: CurrentStoryBoxProps}) {
     return (
         <Wrapper>
             <LikeImg />
-            <Author>작가</Author>
-            <Title>제목</Title>
+            <Author>{post.author}</Author>
+            <Title>{post.title}</Title>
         </Wrapper>
     )
 }
