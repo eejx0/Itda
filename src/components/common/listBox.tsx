@@ -16,7 +16,7 @@ export default function ListBox({ post }: {post: ListBoxProps}) {
         <Wrapper>
             <Link href={`/${post.id}`}>
                 <ContentWrapper>
-                    {/* <LikeImg /> */}
+                    <LikeImg />
                     <ContentBox>
                         <Title>{post.title}</Title>
                         <Author>{post.author}</Author>
@@ -43,12 +43,12 @@ const ContentWrapper = styled.div`
     height: 90px;
 `;
 
-// const LikeImg = styled.div`
-//     width: 94px;
-//     height: 94px;
-//     background-color: black;
-//     border-radius: 10px;
-// `;
+const LikeImg = styled.div`
+    width: 94px;
+    height: 94px;
+    background-color: black;
+    border-radius: 10px;
+`;
 
 const ContentBox = styled.div`
     display: flex;

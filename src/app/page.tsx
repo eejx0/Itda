@@ -13,7 +13,7 @@ import { getDocs, collection, doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-interface Post {
+interface PostsType {
   id: string;
   title: string;
   content: string;
@@ -25,7 +25,7 @@ interface Post {
 export default function Home() {
   const [closed, setClosed] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostsType[]>([]);
   const [nickname, setNickname] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -35,7 +35,7 @@ export default function Home() {
       const postData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as Post[];
+      })) as PostsType[];
 
       setPosts(postData);
     };

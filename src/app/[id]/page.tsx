@@ -2,10 +2,48 @@
 
 import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase";
+
+interface PostType {
+    id: string;
+    title: string;
+    author: string;
+    content: string;
+}
 
 export default function UserStoryDetail() {
     const [closed, setClosed] = useState<boolean>(false);
+    const [post, setPost] = useState<PostType | null>(null);
+    const params = useParams();
+    const id = params?.id as string;
+
+    useEffect(() => {
+        const fetchPost = async () => {
+            if (!id) return;
+            try {
+                const docRef = doc(db, "posts", id as string);
+                const docSnap = await getDoc(docRef);
+        
+                if (docSnap.exists()) {
+                  const data = docSnap.data();
+                  setPost({
+                    id: id as string,
+                    title: data.title,
+                    author: data.author,
+                    content: data.content,
+                  });
+                } else {
+                  console.log("문서가 존재하지 않습니다.");
+                }
+            } catch (err) {
+                console.error('글 상세보기 실패:', err);
+            }
+        }
+        fetchPost();
+    }, [id])
 
     return (
         <Wrapper>
@@ -14,10 +52,10 @@ export default function UserStoryDetail() {
                 <Container>
                     <Img />
                     <TitleWrapper>
-                        <Title>제목</Title>
-                        <Author>작가</Author>
+                        <Title>{post?.title}</Title>
+                        <Author>{post?.author}</Author>
                     </TitleWrapper>
-                    <Content>내용</Content>
+                    <Content>{post?.content}</Content>
                 </Container>
             </ContainerWrapper>
         </Wrapper>
@@ -69,4 +107,5 @@ const Author = styled.p`
 
 const Content = styled.p`
     font-size: 15px;
+    white-space: pre-line;
 `;
