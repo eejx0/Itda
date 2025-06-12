@@ -2,33 +2,71 @@
 
 import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
-import Picture from "../../assets/imgs/picture.svg";
-import Check from "../../assets/imgs/check.svg";
+// import Picture from "../../assets/imgs/picture.svg";
+// import Check from "../../assets/imgs/check.svg";
 import Advertisement from "../../assets/imgs/advertisement.png";
-import HoverContent from "@/components/hoverContent";
+// import HoverContent from "@/components/hoverContent";
 import Image from "next/image";
 import { useState } from "react";
+import { db } from "@/firebase";
+// import { app } from "@/firebase";
+// import { uploadBytes, ref, getDownloadURL, getStorage } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
 
 export default function PostContent() {
     const [closed, setClosed] = useState<boolean>(false);
-    const [checked, setChecked] = useState<boolean>(true);
-    const [, setImage] = useState<File | null>(null);
-    const [isHover, setIsHover] = useState<boolean>(false);
+    const [checked, setChecked] = useState<boolean>(false);
+    // const [image, setImage] = useState<File | null>(null);
+    // const [isHover, setIsHover] = useState<boolean>(false);
+    const [title, setTitle] = useState<string>("");
+    const [content, setContent] = useState<string>("");
+    // const storage = getStorage(app);
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setImage(file);
+    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     // 이미지 부분 주석 처리
+    //     // const file = e.target.files?.[0];
+    //     // if (file) {
+    //     //     setImage(file);
+    //     // }
+    // };
+
+    const savePost = async () => {
+        try {
+            // 이미지 관련 처리 주석
+            // let imageUrl = "";
+            // if (isImageChanged()) {
+            //     const imageRef = ref(storage, `images/${Date.now()}_${image?.name}`);
+            //     await uploadBytes(imageRef, image!);
+            //     imageUrl = await getDownloadURL(imageRef); 
+            // }
+
+            const docRef = await addDoc(collection(db, "posts"), {
+                title,
+                content,
+                completed: checked,
+                // imageUrl, // 이미지 없으니까 빼기
+                createdAt: new Date(),
+            });
+
+            alert("포스트가 저장되었습니다!");
+        } catch (error) {
+            console.error("Error saving post: ", error);
+            alert("포스트 저장 중 오류가 발생했습니다.");
         }
     };
-    
+
+    // 이미지 여부 체크 함수 주석 처리
+    // const isImageChanged = () => {
+    //     return !!image;
+    // };
+
     return (
         <Wrapper>
             <SideBar closed={closed} setClosed={setClosed}/>
             <Container $closed={closed}>
                 <ContentWrapper>
                     <HeadWrapper>
-                        <UploadPicture 
+                        {/* <UploadPicture 
                             onMouseEnter={() => setIsHover(true)}
                             onMouseLeave={() => setIsHover(false)}
                         >
@@ -49,23 +87,23 @@ export default function PostContent() {
                                 />
                             </label>
                             {isHover && <HoverContent />}
-                        </UploadPicture>
+                        </UploadPicture> */}
                         <CompleteWrapper>
                             <p>완결</p>
                             <CheckBox $checked={checked} onClick={() => setChecked(prev => !prev)}>
-                                <Image src={Check} alt="" />
+                                {/* <Image src={Check} alt="" /> */}
                             </CheckBox>
-                        </CompleteWrapper>
+                        </CompleteWrapper> 
                     </HeadWrapper>
                     <ContentBox>
-                        <input placeholder="제목을 작성하세요" type="text" />
+                        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="제목을 작성하세요" type="text" />
                         <Line />
-                        <textarea placeholder="내용을 작성하세요" />
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="내용을 작성하세요" />
                     </ContentBox>
                 </ContentWrapper>
                 <SideWrapper>
                     <Image src={Advertisement} alt="" style={{width: "100%", height: '384px'}} />
-                    <button>저장</button>
+                    <button onClick={savePost}>저장</button>
                 </SideWrapper>
             </Container>
         </Wrapper>
@@ -86,17 +124,17 @@ const Container = styled.div<{ $closed: boolean }>`
     padding: 55px;
 `;
 
-const UploadPicture = styled.div`
-    background-image: url(${Picture.src});
-    width: 100px;
-    height: 100px;
-    background-size: cover;
-    background-position: center;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    position: relative;
-`;
+// const UploadPicture = styled.div`
+//     background-image: url(${Picture.src});
+//     width: 100px;
+//     height: 100px;
+//     background-size: cover;
+//     background-position: center;
+//     cursor: pointer;
+//     display: flex;
+//     align-items: center;
+//     position: relative;
+// `;
 
 const ContentWrapper = styled.div`
     display: flex;
@@ -130,7 +168,7 @@ const CheckBox = styled.div<{ $checked: boolean }>`
     height: 20px;
     border-radius: 50px;
     border: 1px solid #FFACDD;
-    background-color: ${({ $checked }) => $checked ? "white" : "#FFACDD"};
+    background-color: ${({ $checked }) => $checked ? "#FFACDD" : "white"};
     background-size: 70%;
     background-position: center;
     background-repeat: no-repeat;

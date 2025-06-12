@@ -17,8 +17,13 @@ interface SideBarProps {
 }
 
 export default function SideBar({ closed, setClosed }: SideBarProps) {
-    const [width, setWidth] = useState(250);
+    const [, setWidth] = useState(250);
     const [isResizing, setIsResizing] = useState(false);
+    const [, setIsClient] = useState(false)
+
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
 
     useEffect(() => {
         const savedState = localStorage.getItem("closedSidebar");
@@ -62,7 +67,7 @@ export default function SideBar({ closed, setClosed }: SideBarProps) {
     }, [isResizing, stopResizing, resize]);
 
     return (
-        <Wrapper style={{ width: closed ? "90px" : `${width}px` }}>
+        <Wrapper $isClosed={closed}>
             <LogoBox onClick={() => setClosed(!closed)}>
                 <Image src={Logo} alt="" />
                 {!closed && <Image src={TextLogo} alt="잇다" />}
@@ -98,7 +103,7 @@ export default function SideBar({ closed, setClosed }: SideBarProps) {
     );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{$isClosed: boolean}>`
     position: fixed;
     left: 0;
     top: 0;
@@ -111,6 +116,7 @@ const Wrapper = styled.div`
     background-color: white;
     z-index: 1000;
     transition: width 0.1s ease-out;
+    width: ${({$isClosed}) => $isClosed ? "90px" : `250px`};
 `;
 
 const LogoBox = styled.div`
