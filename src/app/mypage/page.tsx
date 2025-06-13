@@ -6,11 +6,81 @@ import SideBar from "@/components/common/sideBar";
 import Image from "next/image";
 import Person from "../../assets/imgs/person/writePersonImg.png";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getDoc, getDocs, query, collection, where, doc } from "firebase/firestore";
+import { db } from "@/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import ListBox from "@/components/common/listBox";
+
+interface MyPostType {
+    id: string;
+    title: string;
+    content: string;
+    author: string;
+    completed: boolean;
+    createdAt: string;
+}
 
 export default function MyPage() {
     const [closed, setClosed] = useState(false);
-    const [isEmpty, ] = useState(false);
+    const [myPosts, setMyPosts] = useState<MyPostType[]>([]);
+    const [userId, setUserId] = useState<string | null>(null);
+    const [nickName, setNickName] = useState<string | null>(null);
+
+    useEffect(() => {
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            setUserId(user.uid);
+            try {
+              const docRef = doc(db, "users", user.uid);
+              const docSnap = await getDoc(docRef);
+              if (docSnap.exists()) {
+                const data = docSnap.data();
+                setNickName(data.nickname ?? "익명");
+              } else {
+                setNickName("익명");
+              }
+            } catch (err) {
+              setNickName("익명");
+              console.error('사용자 정보 가져오기 오류: ', err)
+            }
+          } else {
+            setUserId(null);
+            setNickName(null);
+            setMyPosts([]);
+          }
+        });
+      
+        return () => unsubscribe();
+      }, []);
+
+    useEffect(() => {
+        if (!userId) return;
+
+        async function fetchPosts() {
+            try {
+                const q = query(
+                    collection(db, "posts"),
+                    where("authorId", "==", userId)
+                );
+                const querySnapshot = await getDocs(q);
+                const userPosts: MyPostType[] = [];
+                querySnapshot.forEach((doc) => {
+                    userPosts.push({
+                        id: doc.id,
+                        ...doc.data()
+                    } as MyPostType);
+                });
+                setMyPosts(userPosts);
+            } catch (error) {
+                console.error("글 불러오기 실패", error);
+            }
+        }
+        fetchPosts();
+    }, [userId]);
+
+    const isEmpty = myPosts.length === 0;
 
     return (
         <Wrapper>
@@ -20,7 +90,7 @@ export default function MyPage() {
                     <TextWrapper>
                         <p className="head">IF 스토리</p>
                         <TitleWrapper>
-                            <p>의진님이</p>
+                            <p>{nickName}님이</p>
                             <p className="colorText">적은 이야기</p>
                         </TitleWrapper>
                     </TextWrapper>
@@ -31,12 +101,9 @@ export default function MyPage() {
                             <StyledLink href={'/post'}>작성</StyledLink>
                         </NoContentWrapper> : (
                         <ListBoxWrapper>
-                            {/* <ListBox />
-                            <ListBox />
-                            <ListBox />
-                            <ListBox />
-                            <ListBox />
-                            <ListBox /> */}
+                            {myPosts.map(post => (
+                                <ListBox key={post.id} post={post}/>
+                            ))}
                         </ListBoxWrapper>
                     )}
                 </Container>
