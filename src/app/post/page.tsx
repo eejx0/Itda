@@ -5,6 +5,7 @@ import SideBar from "@/components/common/sideBar";
 // import Picture from "../../assets/imgs/picture.svg";
 // import Check from "../../assets/imgs/check.svg";
 import Advertisement from "../../assets/imgs/advertisement.png";
+import Check from "../../assets/imgs/check.svg";
 // import HoverContent from "@/components/hoverContent";
 import Image from "next/image";
 import { useState } from "react";
@@ -57,7 +58,8 @@ export default function PostContent() {
                 completed: checked,
                 // imageUrl, // 이미지 없으니까 빼기
                 createdAt: new Date(),
-                author: nickname
+                author: nickname,
+                authorId: user.uid
             });
 
             alert("포스트가 저장되었습니다!");
@@ -103,7 +105,7 @@ export default function PostContent() {
                         <CompleteWrapper>
                             <p>완결</p>
                             <CheckBox $checked={checked} onClick={() => setChecked(prev => !prev)}>
-                                {/* <Image src={Check} alt="" /> */}
+                                <Image src={Check} alt="" />
                             </CheckBox>
                         </CompleteWrapper> 
                     </HeadWrapper>
@@ -151,7 +153,7 @@ const Container = styled.div<{ $closed: boolean }>`
 const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
-    flex-grow: 0.93;
+    width: 74%;
 `;
 
 const HeadWrapper = styled.div`
@@ -195,7 +197,7 @@ const ContentBox = styled.div`
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 15px;
     padding: 30px 25px 30px 25px;
     > input {
         width: 100%;

@@ -13,7 +13,7 @@ import { getDocs, collection, doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-interface PostsType {
+export interface PostsType {
   id: string;
   title: string;
   content: string;
@@ -142,7 +142,7 @@ const Container = styled.div`
   width: 70vw;
   margin-left: auto;
   margin-right: auto;
-  /* padding-bottom: 208px; */
+  padding-bottom: 258px;
   > h3 {
     font-size: 23px;
   }

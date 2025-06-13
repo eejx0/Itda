@@ -1,8 +1,10 @@
 "use client"
 
 import styled from "styled-components"
+import Link from "next/link";
 
 interface CurrentStoryBoxProps {
+    id: string;
     title: string;
     author: string;
 }
@@ -10,9 +12,13 @@ interface CurrentStoryBoxProps {
 export default function CurrentStoryBox({ post }: {post: CurrentStoryBoxProps}) {
     return (
         <Wrapper>
-            <LikeImg />
-            <Author>{post.author}</Author>
-            <Title>{post.title}</Title>
+            <Link href={`/edit/${post.id}`}>
+                <ContentWrapper>
+                    <LikeImg />
+                    <Author>{post.author}</Author>
+                    <Title>{post.title}</Title>
+                </ContentWrapper>
+            </Link>
         </Wrapper>
     )
 }
@@ -38,4 +44,11 @@ const Author = styled.p`
 const Title = styled.p`
     font-size: 17px;
     font-weight: 700;
+`;
+
+const ContentWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
 `;

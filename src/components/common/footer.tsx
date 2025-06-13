@@ -53,6 +53,7 @@ const Wrapper = styled.div`
     align-items: center;
     padding: 0px 80px 0px 80px;
     justify-content: space-between;
+    position: absolute;
 `;
 
 const LogoWrapper = styled.div`

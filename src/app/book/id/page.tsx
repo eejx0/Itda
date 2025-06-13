@@ -63,6 +63,7 @@ export default function BookDetail() {
 
 const Wrapper = styled.div`
   display: flex;
+  min-height: 100vh;
 `;
 
 const ContainerWrapper = styled.div<{ $closed: boolean }>`
@@ -81,7 +82,7 @@ const Container = styled.div`
   width: 70vw;
   margin-left: auto;
   margin-right: auto;
-  /* padding-bottom: 208px; */
+  padding-bottom: 258px;
   > h3 {
     font-size: 23px;
   }
