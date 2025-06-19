@@ -75,7 +75,7 @@ export default function Home() {
     post.completed &&
     (post.title.toLowerCase().includes(searchTerm.toLowerCase()))
   );
-
+  
   return (
     <Wrapper>
       <SideBar closed={closed} setClosed={setClosed}/>

@@ -1,122 +1,250 @@
 "use client"
 
 import SideBar from "@/components/common/sideBar"
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Advertisement from "../../../assets/imgs/advertisement.png";
-import Check from "../../../assets/imgs/check.svg";
-import { useParams } from "next/navigation";
-import { getDoc, doc } from "firebase/firestore";
-import { db } from "@/firebase";
-import { useRef } from "react";
-// import Picture from "../../../assets/imgs/picture.svg";
+import styled from "styled-components"
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import Advertisement from "../../../assets/imgs/advertisement.png"
+import Check from "../../../assets/imgs/check.svg"
+import { useParams } from "next/navigation"
+import { db } from "@/firebase"
+import { useRef } from "react"
+import { getAuth } from "firebase/auth"
+import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, orderBy } from "firebase/firestore"
 
 interface EditPostType {
-    id: string;
-    title: string;
-    content: string;
-    author: string;
-    createdAt: string;
-    completed: boolean;
+  id: string
+  title: string
+  content: string
+  author: string
+  createdAt: string
+  completed: boolean
 }
+
+interface ContentType {
+  id: string
+  content: string
+  author: string
+  createdAt: string
+}
+
+type FirebaseTimestamp = {
+    toDate: () => Date
+}
+
+const formatDate = (dateValue: FirebaseTimestamp | Date | string | null | undefined): string => {
+    try {
+      let date: Date
+  
+      if (dateValue && typeof (dateValue as FirebaseTimestamp).toDate === "function") {
+        date = (dateValue as FirebaseTimestamp).toDate()
+      } else if (dateValue instanceof Date) {
+        date = dateValue
+      } else if (typeof dateValue === "string") {
+        date = new Date(dateValue)
+      } else {
+        return "날짜 없음"
+      }
+  
+      return date.toISOString().slice(0, 10).replace(/-/g, ".")
+    } catch (error) {
+      console.error("날짜 포맷팅 오류:", error)
+      return "날짜 오류"
+    }
+  }
 
 export default function EditContent() {
-    const [closed, setClosed] = useState<boolean>(false);
-    const [checked, setChecked] = useState<boolean>(false);
-    const [post, setPost] = useState<EditPostType | null>(null);
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [closed, setClosed] = useState<boolean>(false)
+  const [checked, setChecked] = useState<boolean>(false)
+  const [post, setPost] = useState<EditPostType | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [contents, setContents] = useState<ContentType[]>([])
+  const { id } = useParams<{ id: string }>()
+  const postId = id 
 
-    const handleTextareaChange = () => {
-        const textarea = textareaRef.current;
-        if (textarea) {
-          textarea.style.height = "auto";
-          textarea.style.height = `${textarea.scrollHeight}px`;
+  const fetchNickname = async (uid: string) => {
+    const userDocRef = doc(db, "users", uid)
+    const userSnap = await getDoc(userDocRef)
+    if (userSnap.exists()) {
+      const data = userSnap.data()
+      return data.nickname 
+    } else {
+      console.warn("유저 정보를 찾을 수 없음")
+      return "알 수 없음"
+    }
+  }
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!postId) { return }
+
+      try {
+        const docRef = doc(db, "posts", postId as string)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          const postData = { id: docSnap.id, ...data } as EditPostType
+          setPost(postData)
+          setChecked(postData.completed)
+        } else {
+          console.log("문서가 존재하지 않습니다")
         }
-    };
+      } catch (error) {
+        console.error("포스트 가져오기 오류:", error)
+      }
+    }
 
-    const params = useParams();
-    const postId = params?.id;
+    fetchPost()
+  }, [postId])
 
-    useEffect(() => {
-        const fetchPost = async () => {
-          if (!postId) return;
-      
-          const docRef = doc(db, "posts", postId as string);
-          const docSnap = await getDoc(docRef);
-      
-          if (docSnap.exists()) {
-            const data = docSnap.data() as Omit<EditPostType, "id">;
-            setPost({ id: docSnap.id, ...data });
-          }
-        };
-      
-        fetchPost();
-    }, [postId]);
-    
-    return (
-        <Wrapper>
-            <SideBar closed={closed} setClosed={setClosed}/>
-            <Container $closed={closed}>
-                <ContentWrapper>
-                    <HeadWrapper>
-                        {/* <UploadPicture></UploadPicture> */}
-                        <CompleteWrapper>
-                            <p>완결</p>
-                            <CheckBox $checked={checked} onClick={() => setChecked(prev => !prev)}>
-                                <Image src={Check} alt="" />
-                            </CheckBox>
-                        </CompleteWrapper> 
-                    </HeadWrapper>
-                    <ContentBox>
-                        <InnerScrollBox>
-                            <Title>{post?.title}</Title>
-                            <Line />
-                            <Content>
-                                옛날로 돌아가보면 사실 74 월드컵 네덜란드는 지금의 시선으로 보면 되게 형편없습니다. 
-                                보다가 계속 꺼버리고 결국엔 대부분의 경기들을 풀 타임 시청을 못하긴 했는데 (아리고 사키의 밀란까진 어떻게 됐는데 그 이전은 풀 타임 시청이 안 되더라구요. 
-                                원래 다시 보기라는 거 자체를 안 좋아하긴 하는데 옛날 경기 다 보고나서 다시 보기는 정말 할 게 못 된다는 걸 느끼고 그 후로 지나간 경기들이나 옛날 경기들은 안 찾아봅니다.) 
-                                모두가 미친듯이 뛰어다니긴 하는데 되게 무질서하고 중구난방이었습니다. 
-                                근데 당시에 충격적이었던 건 그거죠. 
-                                축구란 스포츠는 긴 거리를 돌파하고 상대 수비수들을 박스 근처에서 현란하게 제끼면서 골키퍼를 넘어서는 그런 스포츠였는데 다른 의미로 접근한 거였으니까요.
-                            </Content>
-                            <Line />
-                            <TextWrapper>
-                                <Author>냠냠님</Author>
-                                <CreatedAt>2025.06.11</CreatedAt>
-                            </TextWrapper>
-                            <Line />
-                            <Content>
-                                옛날로 돌아가보면 사실 74 월드컵 네덜란드는 지금의 시선으로 보면 되게 형편없습니다. 
-                                보다가 계속 꺼버리고 결국엔 대부분의 경기들을 풀 타임 시청을 못하긴 했는데 (아리고 사키의 밀란까진 어떻게 됐는데 그 이전은 풀 타임 시청이 안 되더라
+  useEffect(() => {
+    const fetchContents = async () => {
+      if (!postId) { return }
 
-                            </Content>
-                            <Line />
-                            <TextWrapper>
-                                <Author>으진님</Author>
-                                <CreatedAt>2025.06.12</CreatedAt>
-                            </TextWrapper>
-                            <Line />
-                            <Textarea
-                                ref={textareaRef}
-                                placeholder="내용을 작성하세요"
-                                onChange={handleTextareaChange}
-                            />
-                        </InnerScrollBox>
-                    </ContentBox>
-                </ContentWrapper>
-                <SideWrapper>
-                    <Image src={Advertisement} alt="" style={{width: "100%", height: '384px'}} />
-                    <button>저장</button>
-                </SideWrapper>
-            </Container>
-        </Wrapper>
-    )
+      try {
+        const contentsRef = collection(db, "posts", postId, "contents")
+        const contentsQuery = query(contentsRef, orderBy("createdAt", "asc"))
+        const contentsSnap = await getDocs(contentsQuery)
+        const contentsList = contentsSnap.docs.map((doc) => {
+          const data = { id: doc.id, ...doc.data() }
+          return data
+        }) as ContentType[]
+
+        setContents(contentsList)
+      } catch (error) {
+        console.error("컨텐츠 가져오기 오류:", error)
+      }
+    }
+
+    if (post) {
+      fetchContents()
+    }
+  }, [postId, post])
+
+  const handleSave = async () => {
+    if (!postId) return
+  
+    try {
+      const auth = getAuth()
+      const user = auth.currentUser
+      const uid = user?.uid
+  
+      if (!uid) {
+        alert("로그인된 유저 정보가 없습니다!")
+        return
+      }
+  
+      const nickname = await fetchNickname(uid)
+  
+      if (checked) {
+        const postRef = doc(db, "posts", postId)
+        await updateDoc(postRef, { completed: true })
+  
+        if (textareaRef.current && textareaRef.current.value.trim()) {
+          const contentsRef = collection(db, "posts", postId, "contents")
+          await addDoc(contentsRef, {
+            content: textareaRef.current.value.trim(),
+            author: nickname,
+            createdAt: new Date().toISOString(),
+          })
+        }
+  
+        alert("이야기가 완결되었습니다")
+  
+        if (post) {
+          setPost({ ...post, completed: true })
+        }
+      } else {
+        if (!textareaRef.current || !textareaRef.current.value.trim()) {
+          alert("내용을 입력해주세요.")
+          return
+        }
+  
+        const contentsRef = collection(db, "posts", postId, "contents")
+        const newContentDoc = await addDoc(contentsRef, {
+          content: textareaRef.current.value.trim(),
+          author: nickname,
+          createdAt: new Date().toISOString(),
+        })
+  
+        const newContent: ContentType = {
+          id: newContentDoc.id,
+          content: textareaRef.current.value.trim(),
+          author: nickname,
+          createdAt: new Date().toISOString(),
+        }
+  
+        setContents((prev) => [...prev, newContent])
+        textareaRef.current.value = ""
+        textareaRef.current.style.height = "auto"
+        alert("내용이 저장되었습니다!")
+      }
+    } catch (error) {
+      console.error("저장 중 오류:", error)
+    }
+  }
+
+  const handleTextareaChange = () => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = "auto"
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }
+
+  return (
+    <Wrapper>
+      <SideBar closed={closed} setClosed={setClosed} />
+      <Container $closed={closed}>
+        <ContentWrapper>
+          <HeadWrapper>
+            <CompleteWrapper>
+              <p>완결</p>
+              <CheckBox $checked={checked} onClick={() => setChecked((prev) => !prev)}>
+                <Image src={Check || "/placeholder.svg"} alt="" />
+              </CheckBox>
+            </CompleteWrapper>
+          </HeadWrapper>
+          <ContentBox>
+            <InnerScrollBox>
+              <Title>{post?.title || "로딩 중..."}</Title>
+              <Line />
+              <Content>{post?.content || "로딩 중..."}</Content>
+              <Line />
+              <TextWrapper>
+                <Author>{post?.author || "로딩 중..."}</Author>
+                <CreatedAt>{post?.createdAt ? formatDate(post.createdAt) : "로딩 중..."}</CreatedAt>
+              </TextWrapper>
+              <Line />
+              {contents.map((item) => (
+                <div style={{display: 'flex', flexDirection:'column', gap: '15px'}} key={item.id}>
+                  <Content>{item.content}</Content>
+                  <Line />
+                  <TextWrapper>
+                    <Author>{item.author}</Author>
+                    <CreatedAt>{formatDate(item.createdAt)}</CreatedAt>
+                  </TextWrapper>
+                  <Line />
+                </div>
+              ))}
+              <Textarea ref={textareaRef} placeholder="내용을 작성하세요" onChange={handleTextareaChange} />
+            </InnerScrollBox>
+          </ContentBox>
+        </ContentWrapper>
+        <SideWrapper>
+          <Image src={Advertisement || "/placeholder.svg"} alt="" style={{ width: "100%", height: "384px" }} />
+          <button onClick={handleSave}>저장</button>
+        </SideWrapper>
+      </Container>
+    </Wrapper>
+  )
 }
 
+// 스타일 컴포넌트들은 동일하게 유지
 const Wrapper = styled.div`
     display: flex;
-`;
+`
 
 const Container = styled.div<{ $closed: boolean }>`
     margin-left: ${({ $closed }) => ($closed ? "90px" : "250px")}; 
@@ -126,32 +254,20 @@ const Container = styled.div<{ $closed: boolean }>`
     width: 100%;
     height: 100vh;
     padding: 55px;
-`;
-
-// const UploadPicture = styled.div`
-//     background-image: url(${Picture.src});
-//     width: 100px;
-//     height: 100px;
-//     background-size: cover;
-//     background-position: center;
-//     cursor: pointer;
-//     display: flex;
-//     align-items: center;
-//     position: relative;
-// `;
+`
 
 const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
     width: 74%;
-`;
+`
 
 const HeadWrapper = styled.div`
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: flex-end;
-`;
+`
 
 const CompleteWrapper = styled.div`
     display: flex;
@@ -162,7 +278,7 @@ const CompleteWrapper = styled.div`
         font-weight: 600;
         font-size: 15px;
     }
-`;
+`
 
 const CheckBox = styled.div<{ $checked: boolean }>`
     display: flex;
@@ -172,12 +288,12 @@ const CheckBox = styled.div<{ $checked: boolean }>`
     height: 20px;
     border-radius: 50px;
     border: 1px solid #FFACDD;
-    background-color: ${({ $checked }) => $checked ? "#FFACDD" : "white"};
+    background-color: ${({ $checked }) => ($checked ? "#FFACDD" : "white")};
     background-size: 70%;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
-`;
+`
 
 const ContentBox = styled.div`
     width: 100%;
@@ -191,14 +307,13 @@ const ContentBox = styled.div`
     flex-direction: column;
     gap: 15px;
     padding: 30px 25px 30px 25px;
-    
-`;
+`
 
 const InnerScrollBox = styled.div`
     display: flex;
     flex-direction: column;
     gap: 15px;
-`;
+`
 
 const Textarea = styled.textarea`
     resize: none;
@@ -214,13 +329,13 @@ const Textarea = styled.textarea`
     ::placeholder{
         color: rgba(0,0,0,0.3);
     }
-`;
+`
 
 const Line = styled.div`
     height: 1px;
     width: 100%;
     background-color: rgba(0,0,0,0.2);
-`;
+`
 
 const SideWrapper = styled.div`
     display: flex;
@@ -243,33 +358,33 @@ const SideWrapper = styled.div`
             background-color: #FF86CE;
         }
     }
-`;
-
+`
 
 const Title = styled.p`
     font-size: 20px;
     font-weight: 600;
     width: 100%;
-`;
+`
 
 const Content = styled.p`
     font-size: 15px;
     line-height: 25px;
     width: 100%;
-`;
+    white-space: pre-line;
+`
 
 const TextWrapper = styled.div`
     display: flex;
     gap: 15px;
     align-items: center;
     margin-left: auto;
-`;
+`
 
 const Author = styled.p`
     font-size: 15px;
-`;
+`
 
 const CreatedAt = styled.p`
     font-size: 13px;
     color: rgba(0,0,0,0.2);
-`;
+`
