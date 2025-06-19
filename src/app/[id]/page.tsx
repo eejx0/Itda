@@ -6,59 +6,75 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
+import AuthorNameBox from "@/components/common/authorNameBox";
 
-interface PostType {
+interface ContentItem {
+    content: string;
+    author: string;
+    createdAt: string;
+  }
+  
+  interface PostType {
     id: string;
     title: string;
     author: string;
     content: string;
-}
+    contents: ContentItem[];
+  }
 
 export default function UserStoryDetail() {
     const [closed, setClosed] = useState<boolean>(false);
     const [post, setPost] = useState<PostType | null>(null);
     const params = useParams();
     const id = params?.id as string;
+    const [hoveredAuthor, setHoveredAuthor] = useState<string | null>(null);
+    const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+
+    const handleMouseEnter = (author: string, e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setTooltipPos({ x: rect.left, y: rect.top - 30 });
+        setHoveredAuthor(author);
+      };
+    
+      const handleMouseLeave = () => {
+        setHoveredAuthor(null);
+        setTooltipPos(null);
+      };    
 
     useEffect(() => {
         const fetchPost = async () => {
           if (!id) return;
+      
           try {
             const docRef = doc(db, "posts", id);
             const docSnap = await getDoc(docRef);
       
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-      
-              let fullContent = data.content;
-      
-              if (data.completed) {
-                const contentsRef = collection(db, "posts", id, "contents");
-                const contentsSnap = await getDocs(contentsRef);
-      
-                const sorted = contentsSnap.docs
-                  .map((doc) => doc.data())
-                  .sort((a, b) => {
-                    const dateA = new Date(a.createdAt).getTime();
-                    const dateB = new Date(b.createdAt).getTime();
-                    return dateA - dateB;
-                  });
-      
-                const allContents = sorted.map((item) => item.content).join("\n\n");
-                fullContent = `${data.content}\n\n${allContents}`;
-              }
-      
-              setPost({
-                id,
-                title: data.title,
-                author: data.author,
-                content: fullContent,
-              });
-            } else {
+            if (!docSnap.exists()) {
               console.log("문서가 존재하지 않습니다.");
+              return;
             }
+      
+            const data = docSnap.data();
+      
+            let contents: ContentItem[] = [];
+            if (data.completed) {
+              const contentsRef = collection(db, "posts", id, "contents");
+              const contentsSnap = await getDocs(contentsRef);
+      
+              contents = contentsSnap.docs
+                .map((doc) => doc.data() as ContentItem)
+                .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            }
+      
+            setPost({
+              id,
+              title: data.title,
+              author: data.author,
+              content: data.content,
+              contents,
+            });
           } catch (err) {
-            console.error('글 상세보기 실패:', err);
+            console.error("글 상세보기 실패:", err);
           }
         };
       
@@ -75,7 +91,34 @@ export default function UserStoryDetail() {
                         <Title>{post?.title || '로딩 중...'}</Title>
                         <Author>{post?.author || '로딩 중...'}</Author>
                     </TitleWrapper>
-                    <Content>{post?.content || '로딩 중...'}</Content>
+                    <Content>
+                        {post?.content.split("\n").map((line, idx) => (
+                            <p
+                                key={"main-" + idx}
+                                onMouseEnter={(e) => handleMouseEnter(post.author, e)}
+                                onMouseLeave={handleMouseLeave}
+                                style={{ cursor: "pointer" }}
+                            >
+                                {line}
+                            </p>
+                        ))}
+
+                        {post?.contents.map((item, idx) => (
+                            <p
+                                key={"content-" + idx}
+                                onMouseEnter={(e) => handleMouseEnter(item.author, e)}
+                                onMouseLeave={handleMouseLeave}
+                                style={{marginTop: '10px', marginBottom: "10px", cursor: "pointer" }}
+                            >
+                                {item.content}
+                            </p>
+                        ))}
+                    </Content>
+                    {hoveredAuthor && tooltipPos && (
+                        <TooltipWrapper style={{ top: tooltipPos.y, left: tooltipPos.x, position: "fixed" }}>
+                            <AuthorNameBox author={hoveredAuthor} />
+                        </TooltipWrapper>
+                    )}
                 </Container>
             </ContainerWrapper>
         </Wrapper>
@@ -125,7 +168,12 @@ const Author = styled.p`
     font-size: 15px;
 `;
 
-const Content = styled.p`
+const Content = styled.div`
     font-size: 15px;
     white-space: pre-line;
+`;
+
+const TooltipWrapper = styled.div`
+  z-index: 9999;
+  pointer-events: none;
 `;
