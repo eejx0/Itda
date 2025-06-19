@@ -32,20 +32,51 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       const snapshot = await getDocs(collection(db, "posts"));
-      const postData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as PostsType[];
-
+  
+      const postData = await Promise.all(
+        snapshot.docs.map(async (docSnap) => {
+          const data = docSnap.data();
+          const postId = docSnap.id;
+  
+          let fullContent = data.content;
+  
+          if (data.completed) {
+            const contentsRef = collection(db, "posts", postId, "contents");
+            const contentsSnap = await getDocs(contentsRef);
+  
+            const sorted = contentsSnap.docs
+              .map((doc) => doc.data())
+              .sort((a, b) => {
+                const dateA = new Date(a.createdAt).getTime();
+                const dateB = new Date(b.createdAt).getTime();
+                return dateA - dateB;
+              });
+  
+            if (sorted.length > 0) {
+              const latestContent = sorted[0].content;
+              fullContent = `${data.content}\n${latestContent}`; 
+            }
+          }
+  
+          return {
+            id: postId,
+            title: data.title,
+            author: data.author,
+            content: fullContent,
+            completed: data.completed,
+            createdAt: data.createdAt,
+          } as PostsType;
+        })
+      );
+  
       setPosts(postData);
     };
-
+  
     fetchPosts();
   }, []);
+  
 
   useEffect(() => {
-    // posts 배열에서 completed가 false인 글이 하나라도 있으면 isEmpty는 false
-    // 아니면 true
     const hasIncomplete = posts.some(post => post.completed === false);
     setIsEmpty(!hasIncomplete);
   }, [posts]);  
@@ -81,7 +112,7 @@ export default function Home() {
       <SideBar closed={closed} setClosed={setClosed}/>
       <ContainerWrapper $closed={closed}>
         <Container>
-          <h3>안녕하세요, {nickname}님  💬</h3>
+          <h3>안녕하세요, {nickname || '사용자'}님  💬</h3>
           <BoxWrapper>
             <LeftBox>
               <CommonInput 

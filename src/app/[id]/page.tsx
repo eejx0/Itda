@@ -4,7 +4,7 @@ import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 
 interface PostType {
@@ -22,28 +22,48 @@ export default function UserStoryDetail() {
 
     useEffect(() => {
         const fetchPost = async () => {
-            if (!id) return;
-            try {
-                const docRef = doc(db, "posts", id as string);
-                const docSnap = await getDoc(docRef);
-        
-                if (docSnap.exists()) {
-                  const data = docSnap.data();
-                  setPost({
-                    id: id as string,
-                    title: data.title,
-                    author: data.author,
-                    content: data.content,
+          if (!id) return;
+          try {
+            const docRef = doc(db, "posts", id);
+            const docSnap = await getDoc(docRef);
+      
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+      
+              let fullContent = data.content;
+      
+              if (data.completed) {
+                const contentsRef = collection(db, "posts", id, "contents");
+                const contentsSnap = await getDocs(contentsRef);
+      
+                const sorted = contentsSnap.docs
+                  .map((doc) => doc.data())
+                  .sort((a, b) => {
+                    const dateA = new Date(a.createdAt).getTime();
+                    const dateB = new Date(b.createdAt).getTime();
+                    return dateA - dateB;
                   });
-                } else {
-                  console.log("문서가 존재하지 않습니다.");
-                }
-            } catch (err) {
-                console.error('글 상세보기 실패:', err);
+      
+                const allContents = sorted.map((item) => item.content).join("\n\n");
+                fullContent = `${data.content}\n\n${allContents}`;
+              }
+      
+              setPost({
+                id,
+                title: data.title,
+                author: data.author,
+                content: fullContent,
+              });
+            } else {
+              console.log("문서가 존재하지 않습니다.");
             }
-        }
+          } catch (err) {
+            console.error('글 상세보기 실패:', err);
+          }
+        };
+      
         fetchPost();
-    }, [id])
+      }, [id]);      
 
     return (
         <Wrapper>
@@ -52,10 +72,10 @@ export default function UserStoryDetail() {
                 <Container>
                     <Img />
                     <TitleWrapper>
-                        <Title>{post?.title}</Title>
-                        <Author>{post?.author}</Author>
+                        <Title>{post?.title || '로딩 중...'}</Title>
+                        <Author>{post?.author || '로딩 중...'}</Author>
                     </TitleWrapper>
-                    <Content>{post?.content}</Content>
+                    <Content>{post?.content || '로딩 중...'}</Content>
                 </Container>
             </ContainerWrapper>
         </Wrapper>
