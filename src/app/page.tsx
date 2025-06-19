@@ -49,7 +49,7 @@ export default function Home() {
     const hasIncomplete = posts.some(post => post.completed === false);
     setIsEmpty(!hasIncomplete);
   }, [posts]);  
-
+ 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {

@@ -17,8 +17,8 @@ interface MyPostType {
     title: string;
     content: string;
     author: string;
-    completed: boolean;
     createdAt: string;
+    completed: boolean;
 }
 
 export default function MyPage() {
