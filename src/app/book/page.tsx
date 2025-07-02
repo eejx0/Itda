@@ -4,11 +4,49 @@ import styled from "styled-components"
 import SideBar from "@/components/common/sideBar";
 import CommonInput from "@/components/common/input";    
 import Footer from "@/components/common/footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import axios from "axios";
+
+interface Book {
+    title: string;
+    author: string;
+    image: string;
+    isbn: string;
+}
+
+const CLIENT_ID = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID!;
+const CLIENT_SECRET = process.env.NEXT_PUBLIC_NAVER_CLIENT_SECRET!;
 
 export default function BookList() {
     const [closed, setClosed] = useState<boolean>(false);
+    const [query, setQuery] = useState<string>('')
+    const [books, setBooks] = useState<Book[]>([]);
+
+    useEffect(() => {
+        const fetchBooks = async () => {
+          try {
+            const res = await axios.get("https://openapi.naver.com/v1/search/book.json", {
+              params: {
+                query: query.trim() || "프로그래밍",
+                display: 20, 
+                start: 1,
+              },
+              headers: {
+                "X-Naver-Client-Id": CLIENT_ID,
+                "X-Naver-Client-Secret": CLIENT_SECRET,
+              },
+            });
+    
+            const items = res.data.items;
+            setBooks(items);
+          } catch (err) {
+            console.error("네이버 책 API 오류:", err);
+          }
+        };
+    
+        fetchBooks();
+      }, [query]);
 
     return (
         <Wrapper>
@@ -24,72 +62,24 @@ export default function BookList() {
                         </TitleWrapper>
                     </TextWrapper>
                     <CommonInputWrapper>
-                        <CommonInput placeholder="책 제목을 검색하세요"/>
+                        <CommonInput
+                            placeholder="책 제목을 검색하세요"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
                     </CommonInputWrapper>
                     <BookListWrapper>
-                        <Link href={'/book/id'}>
+                    {books.map((book) => (
+                        <Link key={book.isbn} href={`/book/${book.isbn}`}>
                             <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
+                            <BookPicture style={{ backgroundImage: `url(${book.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+                            <BookTextWrapper>
+                                <p className="title">{book.title.replace(/<[^>]*>?/g, "")}</p>
+                                <p className="author">{book.author}</p>
+                            </BookTextWrapper>
                             </BookWrapper>
                         </Link>
-                        <Link href={'/book/id'}>
-                            <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
-                            </BookWrapper>
-                        </Link>
-                        <Link href={'/book/id'}>
-                            <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
-                            </BookWrapper>
-                        </Link>
-                        <Link href={'/book/id'}>
-                            <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
-                            </BookWrapper>
-                        </Link>
-                        <Link href={'/book/id'}>
-                            <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
-                            </BookWrapper>
-                        </Link>
-                        <Link href={'/book/id'}>
-                            <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
-                            </BookWrapper>
-                        </Link>
-                        <Link href={'/book/id'}>
-                            <BookWrapper>
-                                <BookPicture />
-                                <BookTextWrapper>
-                                    <p className="title">책 제목</p>
-                                    <p className="author">작가</p>
-                                </BookTextWrapper>   
-                            </BookWrapper>
-                        </Link>
+                    ))}
                     </BookListWrapper>
                 </Container>
                 <Footer />

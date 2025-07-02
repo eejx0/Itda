@@ -32,7 +32,7 @@ export default function UserStoryDetail() {
 
     const handleMouseEnter = (author: string, e: React.MouseEvent) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setTooltipPos({ x: rect.left, y: rect.top - 30 });
+        setTooltipPos({ x: rect.left, y: rect.top - 33 });
         setHoveredAuthor(author);
       };
     
